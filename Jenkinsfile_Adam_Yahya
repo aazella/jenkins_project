@@ -33,11 +33,27 @@ pipeline {
             }
         }
 
+        stage('Coverage') {
+            steps {
+                script {
+                    sh "source ${VIRTUAL_ENV}/bin/activate && coverage run -m pytest && coverage report && coverage html"
+                }
+            }
+        }
+
+        stage('Security Scan') {
+            steps {
+                script {
+                    sh "source ${VIRTUAL_ENV}/bin/activate && bandit app.py"
+                }
+            }
+        }
+
         stage('Deploy') {
             steps {
                 script {
-                    // Deployment logic, e.g., pushing to a remote server
                     echo "Deploying application..."
+                    sh "bash deploy.sh"
                 }
             }
         }
